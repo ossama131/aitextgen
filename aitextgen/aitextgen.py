@@ -90,6 +90,7 @@ class aitextgen:
         cache_dir: str = "aitextgen",
         tf_gpt2: str = None,
         to_gpu: bool = False,
+        gpu_index: int = 0,
         to_fp16: bool = False,
         verbose: bool = False,
         gradient_checkpointing: bool = False,
@@ -271,7 +272,7 @@ class aitextgen:
                     + "You may want to avoid using to_fp16 for the time being."
                 )
                 self.to_fp16()
-            self.to_gpu()
+            self.to_gpu(gpu_index)
 
     def generate(
         self,
