@@ -710,10 +710,10 @@ class aitextgen:
             gpus=n_gpu,
             max_steps=num_steps,
             gradient_clip_val=max_grad_norm,
-            checkpoint_callback=False,
+            enable_checkpointing=False,
             logger=loggers if loggers else False,
-            weights_summary=None,
-            progress_bar_refresh_rate=progress_bar_refresh_rate,  # ignored
+            enable_model_summary=False,
+            # progress_bar_refresh_rate=progress_bar_refresh_rate,  # ignored
             callbacks=[
                 ATGProgressBar(
                     save_every,
@@ -748,7 +748,7 @@ class aitextgen:
             train_params["benchmark"] = True
 
         if n_gpu > 1:
-            train_params["distributed_backend"] = "ddp"
+            train_params["strategy"] = "ddp"
 
         trainer = pl.Trainer(**train_params)
         trainer.fit(train_model)
