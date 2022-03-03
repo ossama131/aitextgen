@@ -747,7 +747,7 @@ class aitextgen:
         if is_gpu_used and benchmark:
             train_params["benchmark"] = True
 
-        if n_gpu > 1:
+        if n_gpu=-1 or n_gpu > 1:
             train_params["strategy"] = "ddp"
 
         trainer = pl.Trainer(**train_params)
