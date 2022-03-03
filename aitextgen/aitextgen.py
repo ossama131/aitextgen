@@ -730,6 +730,7 @@ class aitextgen:
                 )
             ],
             plugins=deepspeed_plugin,
+            auto_select_gpus=True,
         )
 
         if fp16:
