@@ -748,7 +748,7 @@ class aitextgen:
             train_params["benchmark"] = True
 
         if n_gpu==-1 or n_gpu > 1:
-            train_params["strategy"] = "ddp"
+            train_params["strategy"] = "ddp2"
 
         trainer = pl.Trainer(**train_params)
         trainer.fit(train_model)
