@@ -6,6 +6,7 @@ import shutil
 import sys
 from datetime import datetime
 from random import randint
+from termios import N_PPP
 from typing import List, Optional, Union
 
 import pytorch_lightning as pl
@@ -555,7 +556,7 @@ class aitextgen:
         output_dir: str = "trained_model",
         fp16: bool = False,
         fp16_opt_level: str = "O1",
-        n_gpu: int = -1,
+        n_gpu: int = Union[int,str]=-1,
         tpu_cores: int = 0,
         max_grad_norm: float = 0.5,
         gradient_accumulation_steps: int = 1,
@@ -624,7 +625,7 @@ class aitextgen:
             create_gdrive_folder(run_id)
 
         self.model = self.model.train()
-        is_gpu_used = torch.cuda.is_available() and n_gpu != 0
+        is_gpu_used = torch.cuda.is_available() and (n_gpu != 0 or n_gpu != "0")
 
         if isinstance(train_data, str):
             block_size = model_max_length(self.model.config)
@@ -687,10 +688,13 @@ class aitextgen:
 
         # if try to use a GPU but no CUDA, use CPU
         if not is_gpu_used:
-            n_gpu = 0
+            if isinstance(n_gpu,int):
+                n_gpu = 0
+            elif isinstance(n_gpu,str):
+                n_gpu = "0"
 
         # force single-GPU on Windows
-        if platform.system() == "Windows" and is_gpu_used and n_gpu != 1:
+        if platform.system() == "Windows" and is_gpu_used and (n_gpu != 1 or n_gpu != "1"):
             logger.warning(
                 "Windows does not support multi-GPU training. Setting to 1 GPU."
             )
@@ -740,14 +744,17 @@ class aitextgen:
         if tpu_cores > 0:
             train_params["tpu_cores"] = tpu_cores
             train_params["gpus"] = 0
-            n_gpu = 0
+            if isinstance(n_gpu,int):
+                n_gpu = 0
+            elif isinstance(n_gpu,str):
+                n_gpu = "0"
 
         # benchmark gives a boost for GPUs if input size is constant,
         # which will always be the case with aitextgen training
         if is_gpu_used and benchmark:
             train_params["benchmark"] = True
 
-        if n_gpu==-1 or n_gpu > 1:
+        if n_gpu!=0 or n_gpu!="0" or n_gpu!=1 or n_gpu!="1":
             train_params["strategy"] = "dp"
 
         trainer = pl.Trainer(**train_params)
