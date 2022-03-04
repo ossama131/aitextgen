@@ -553,7 +553,7 @@ class aitextgen:
     def train(
         self,
         train_data: Union[str, TokenDataset],
-        n_gpu: int = Union[int,str]=-1,
+        n_gpu: int = Union[int,str],
         output_dir: str = "trained_model",
         fp16: bool = False,
         fp16_opt_level: str = "O1",       
