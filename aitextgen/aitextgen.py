@@ -552,10 +552,10 @@ class aitextgen:
     def train(
         self,
         train_data: Union[str, TokenDataset],
+        n_gpu: Union[int,str]=-1,
         output_dir: str = "trained_model",
         fp16: bool = False,
         fp16_opt_level: str = "O1",
-        n_gpu: int = -1,
         tpu_cores: int = 0,
         max_grad_norm: float = 0.5,
         gradient_accumulation_steps: int = 1,
