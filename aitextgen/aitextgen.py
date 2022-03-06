@@ -283,6 +283,8 @@ class aitextgen:
         min_length: int = None,
         max_length: int = 256,
         temperature: float = 0.7,
+        repetition_penalty=1.5,
+        no_repeat_ngram_size=8,
         do_sample: bool = True,
         return_as_list: bool = False,
         seed: int = None,
@@ -359,6 +361,8 @@ class aitextgen:
                 num_return_sequences=n,
                 pad_token_id=pad_token_id,
                 use_cache=use_cache,
+                repetition_penalty=repetition_penalty,
+                no_repeat_ngram_size=no_repeat_ngram_size,
                 **kwargs,
             )
 
