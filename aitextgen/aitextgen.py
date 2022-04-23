@@ -715,6 +715,8 @@ class aitextgen:
 
         train_params = dict(
             accumulate_grad_batches=gradient_accumulation_steps,
+            accelerator='gpu',				#TODO parsable configuration
+            devices=2,					#TODO automatic configuration 
             gpus=n_gpu,
             max_steps=num_steps,
             gradient_clip_val=max_grad_norm,
@@ -759,7 +761,7 @@ class aitextgen:
             train_params["benchmark"] = True
 
         if n_gpu!=0 or n_gpu!="0" or n_gpu!=1 or n_gpu!="1":
-            train_params["strategy"] = "dp"
+            train_params["strategy"] = "ddp"
 
         trainer = pl.Trainer(**train_params)
         trainer.fit(train_model)
