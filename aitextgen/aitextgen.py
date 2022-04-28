@@ -13,6 +13,7 @@ import pytorch_lightning as pl
 import torch
 from pkg_resources import resource_filename
 from pytorch_lightning.plugins import DeepSpeedPlugin
+from pytorch_lightning.strategies import DeepSpeedStrategy
 from tqdm.auto import trange
 from transformers import (
     AutoConfig,
@@ -584,6 +585,7 @@ class aitextgen:
         freeze_layers: bool = False,
         num_layers_freeze: int = None,
         use_deepspeed: bool = False,
+        strategy: str = None,
         **kwargs,
     ) -> None:
         """
@@ -761,7 +763,21 @@ class aitextgen:
             train_params["benchmark"] = True
 
         if n_gpu!=0 or n_gpu!="0" or n_gpu!=1 or n_gpu!="1":
-            train_params["strategy"] = "ddp"
+            assert strategy, 'Distributed GPU Strategy is not set!'
+            if use_deepspeed:
+                deepspeed_strategies= [
+                    'deepspeed_stage_1',
+                    'deepspeed_stage_2',
+                    'deepspeed_stage_3',
+                    'deepspeed_stage_2_offload',
+                    'deepspeed_stage_3_offload'
+                ]
+                assert strategy in deepspeed_strategies or isinstance(strategy, DeepSpeedStrategy),\
+                    f'{strategy} is not a valid DeepSpeed strategy!'
+                
+                train_params["strategy"] = strategy
+            else:
+                train_params["strategy"] = strategy
 
         trainer = pl.Trainer(**train_params)
         trainer.fit(train_model)
